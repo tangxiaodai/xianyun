@@ -39,6 +39,30 @@
       <span class="iconfont icontejiajipiao" />
       <i>特价机票</i>
     </h2>
+    <div class="air-sale">
+      <el-row
+        type="flex"
+        justify="space-between"
+        class="air-sale-img"
+      >
+        <el-col
+          v-for="(item,index) in imgList"
+          :key="index"
+          :span="6"
+        >
+          <nuxt-link :to="`/air/flights?departCity=${item.departCity}&departCode=${item.departCode}&destCity=${item.destCity}&destCode=${item.destCode}&departDate=${item.departDate}`">
+            <img :src="item.cover">
+            <el-row
+              class="air-sale-info"
+              type="flex"
+              justify="space-between"
+            >
+              <span>{{ item.departCity }}-{{ item.destCity }}</span><span>￥{{ item.price }}</span>
+            </el-row>
+          </nuxt-link>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -47,6 +71,21 @@ import SearchForm from '@/components/air/searchForm'
 export default {
   components: {
     SearchForm
+  },
+  data() {
+    return {
+      imgList: []
+    }
+  },
+  mounted() {
+    // 推荐机票接口
+    this.$axios({
+      url: '/airs/sale'
+    }).then((res) => {
+      const { data } = res.data
+      this.imgList = data
+      // console.log(this.imgList)
+    })
   }
 }
 </script>
@@ -79,6 +118,34 @@ export default {
     font-size: 20px;
     font-weight: 400;
     color: #409eff;
+  }
+  .air-sale {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 50px;
+    .air-sale-img {
+      > div {
+        width: 225px;
+        height: 140px;
+        position: relative;
+        overflow: hidden;
+        img {
+          width: 100%;
+        }
+        .air-sale-info {
+          position: absolute;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          color: #fff;
+          height: 30px;
+          line-height: 30px;
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0 15px;
+          font-size: 14px;
+        }
+      }
+    }
   }
 }
 </style>
